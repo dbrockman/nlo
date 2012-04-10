@@ -1,0 +1,112 @@
+#!/usr/bin/env node
+
+var exec = require('child_process').exec;
+var argv = require('optimist').options({
+  h: { type: 'boolean', alias: 'help' },
+  g: { type: 'boolean', alias: 'global' },
+  C: { type: 'boolean', alias: 'no-colors' },
+  O: { type: 'boolean', alias: 'no-outdated' },
+  j: { type: 'boolean', alias: 'json' }
+}).argv;
+var latestVersions,
+  lsLines,
+  maxn = 0, maxv = 0,
+  outdatedCount = -1,
+  flags = argv.g ? ' -g' : '';
+
+if (argv.h) {
+  console.log([
+    'List installed npm packages with current version and latest version if the package is outdated.',
+    '',
+    'Usage: nlo [options]',
+    '',
+    'Options:',
+    '',
+    '  -h, --help          output this help information',
+    '  -g, --global        list packages in the global install prefix instead of in the current project',
+    '  -C, --no-colors     output without colors',
+    '  -O, --no-outdated   skip check for outdated modules',
+    '  -j, --json          output json'
+  ].join('\n'));
+  process.exit();
+}
+
+
+
+function pad(s, n) {
+  return Array(n - s.length + 3).join(' ');
+}
+
+function done() {
+  var green = '\033[32m', red = '\033[31m', end = '\033[39m';
+  if (argv.C || outdatedCount < 0) {
+    green = red = end = '';
+  }
+  if (argv.j) {
+    console.log(JSON.stringify(lsLines.map(function (item) {
+      item[1] = item[1] || null;
+      item[2] = latestVersions && latestVersions[item[0]] || null;
+      return item;
+    })));
+  } else {
+    console.log(lsLines.map(function (item) {
+      var name = item[0], current = item[1], p = pad(name, maxn);
+      var latest = outdatedCount > 0 && latestVersions[name];
+      return latest ?
+        red + name + p + current + end + pad(current, maxv) + green + latest + end :
+        green + name + p + current + end;
+    }).join('\n'));
+  }
+}
+
+exec('npm ls --parseable' + flags, function (error, stdout, stderr) {
+  var ddup = {};
+  if (error) {
+    console.error('exec ls error:', error);
+  } else {
+    lsLines = stdout.toString().split('\n').map(function (line) {
+      var m = line.match(/.*?\/node_modules\/[^\/]+/), p, n, v;
+      if (m && !ddup[m = m[0]]) {
+        ddup[m] = true;
+        try {
+          p = require(m + '/package.json');
+          n = p.name;
+          v = p.version;
+        } catch (e) {}
+        if (n) {
+          v = v || '';
+          maxn = Math.max(maxn, n.length);
+          maxv = Math.max(maxv, v.length);
+          return [n, v];
+        }
+      }
+    }).filter(function (line) {
+      return !!line;
+    });
+  }
+  lsLines = lsLines || [];
+  if (latestVersions || argv.O) {
+    done();
+  }
+});
+
+if (!argv.O) {
+  exec('npm outdated' + flags, function (error, stdout, stderr) {
+    latestVersions = {};
+    if (error) {
+      console.error('exec outdated error:', error);
+    } else {
+      outdatedCount = 0;
+      stdout.toString().split('\n').forEach(function (item) {
+        item = item.trim().split(' ')[0].split('@');
+        if (item.length == 2) {
+          latestVersions[item[0]] = item[1];
+          outdatedCount++;
+        }
+      });
+    }
+    if (lsLines) {
+      done();
+    }
+  });
+}

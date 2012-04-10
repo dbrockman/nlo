@@ -1,0 +1,19 @@
+{
+  "name": "nlo",
+  "preferGlobal": true,
+  "version": "1.0.0",
+  "author": "David Brockman Smoliansky @dbrckmn",
+  "description": "List installed npm packages with current version and latest version if the package is outdated",
+  "dependencies": {
+    "optimist": "0.3.x"
+  },
+  "bin": {
+    "nlo": "./bin/nlo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dbrockman/nlo.git"
+  },
+  "keywords": [ "cli", "npm", "ls" ],
+  "engine": { "node": ">=0.6" }
+}
