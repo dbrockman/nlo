@@ -72,7 +72,10 @@ exec('npm ls --parseable' + flags, function (error, stdout, stderr) {
           p = require(m + '/package.json');
           n = p.name;
           v = p.version;
-        } catch (e) {}
+        } catch (e) {
+          n = m.split('/').pop();
+          v = '';
+        }
         if (n) {
           v = v || '';
           maxn = Math.max(maxn, n.length);
