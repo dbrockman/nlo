@@ -1,7 +1,7 @@
 {
   "name": "nlo",
   "preferGlobal": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "David Brockman Smoliansky @dbrckmn",
   "description": "List installed npm packages with current version and latest version if the package is outdated",
   "dependencies": {
