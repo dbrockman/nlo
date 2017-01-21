@@ -1,5 +1,7 @@
 ## nlo
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/dbrockman/nlo.svg)](https://greenkeeper.io/)
+
   List installed npm packages with current version and latest version if the package is outdated.
 
 
