@@ -5,7 +5,7 @@
   "author": "David Brockman Smoliansky @dbrckmn",
   "description": "List installed npm packages with current version and latest version if the package is outdated",
   "dependencies": {
-    "optimist": "0.3.x"
+    "optimist": "~0.6.1"
   },
   "bin": {
     "nlo": "./bin/nlo"
