@@ -5,7 +5,7 @@
   "author": "David Brockman Smoliansky @dbrckmn",
   "description": "List installed npm packages with current version and latest version if the package is outdated",
   "dependencies": {
-    "optimist": "0.3.x"
+    "optimist": "^0.3.x"
   },
   "bin": {
     "nlo": "./bin/nlo"
@@ -14,6 +14,12 @@
     "type": "git",
     "url": "https://github.com/dbrockman/nlo.git"
   },
-  "keywords": [ "cli", "npm", "ls" ],
-  "engine": { "node": ">=0.6" }
+  "keywords": [
+    "cli",
+    "npm",
+    "ls"
+  ],
+  "engine": {
+    "node": ">=0.6"
+  }
 }
